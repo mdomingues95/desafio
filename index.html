@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>My first Vue app</title>
-  <script src="https://unpkg.com/vue"></script>
-</head>
-<body>
-  <div id="app">
-    {{ message }}
-  </div>
 
-  <script>
-    var app = new Vue({
-      el: '#app',
-      data: {
-        message: 'Hello Vue!'
-      }
-    })
-  </script>
-</body>
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <title>Simplus Desafio</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="js/firebase.js"></script>
+    
+  </head>
+
+  <body>
+
+    <div id="composition-container" class="container">
+      <composition></composition>
+    </div>
+    
+    <script src="components/composition/composition.js"></script>
+    <link rel="stylesheet" href="components/composition/composition.css">
+
+    <script src="components/product/product.js"></script>
+    <link rel="stylesheet" href="components/product/product.css">
+
+
+
+  </body>
+
 </html>
