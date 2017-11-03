@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
     <title>Simplus Desafio</title>
+    <link rel="icon" href="images/simplus.png">
+
     <script src="js/jquery.min.js"></script>
     <script src="js/tether.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -16,25 +18,211 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/index.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    
     <script src="js/firebase.js"></script>
     
   </head>
 
   <body>
 
-    <div id="composition-container" class="container">
-      <composition></composition>
+    <div id="loading">
+      <transition name="fade">
+        <div v-if="this.loadingStatus" class="loading-background" >
+          <img class="loading" src="images/loading.gif">  
+        </div>
+      </transition>
     </div>
-    
-    <script src="components/composition/composition.js"></script>
-    <link rel="stylesheet" href="components/composition/composition.css">
+
+    <div class="composition container">
+
+      <div class="list-group">
+        <a  class="list-group-item black">
+          <div class="col" style="padding-left: 10px">GTIN</div>
+          <div class="col">Unidade da embalagem</div>
+          <div class="col">Quantidade da embalagem</div>
+          <div class="col">Ações</div>
+        </a>
+        <div id="product-list">
+
+          <div v-for="(productbox, index) in productList">
+            <div v-for="(item, itemindex) in productbox">
+
+                <div class="element" :style="'padding-left: ' + parseInt(itemindex) * 30 + 'px'">
+                  <a  v-bind:id="'product' + index + '' +  itemindex" 
+                    v-on:mouseover="hoverIcon(index + '' + itemindex, 'over')" 
+                    v-on:mouseout="hoverIcon(index + '' + itemindex, 'out')"
+                     class="list-group-item list-group-item-action product"
+                     v-bind:class="{'product-hide': productList[index][parseInt(itemindex) - 1] != undefined}"
+                     v-on:click="showChild(index, itemindex)"
+                  >
+                    <div class="col">
+                      <div class="row">
+                        <i v-bind:id="'icon' + index + '' +  itemindex" class="material-icons arrow">
+                          {{productList[index][parseInt(itemindex) + 1] != undefined ? 
+                            "keyboard_arrow_right" : ""
+                          }}
+                        </i>
+                        {{item.gtin}}
+                      </div>
+                    </div>
+
+                    <div :style="'margin-left: -' + parseInt(itemindex) * 30 + 'px'" class="col">
+                          {{item.embalagem}}
+                     </div>
+
+                    <div class="col">
+                          {{item.quantidade}}
+                     </div>
+
+                    <div class="col">
+                      <button v-if="productList[index].length < 5" v-on:click="createLink($event, index, itemindex)" type="button" class="btn btn-primary btn-sm btn-action"><i class="material-icons">insert_link</i></button>
+                      <button type="button" class="btn btn-warning btn-sm btn-action" v-on:click="editProduct($event, index, itemindex)"><i class="material-icons">mode_edit</i></button>
+                      <button type="button" class="btn btn-danger btn-sm btn-action" v-on:click="removeProduct($event, index, itemindex)"><i class="material-icons">delete</i></button>
+                    </div>
+                  </a>
+
+              </div>
+              
+            </div>
+          </div>
+
+          <div class="element">
+              <a 
+                class="list-group-item list-group-item-action newProduct"
+                v-on:click="createProduct"
+              >
+              <div class="col">
+              <div class="row">
+                  <i class="material-icons arrow">
+                    add_circle
+                  </i>
+                  Adicionar uma nova composição
+                </div>
+              </div>
+              
+              </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div id="newProduct">
+
+        <div id="newProductModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+
+                <div class="modal-header black">
+                  <h5 class="modal-title" id="exampleModalLabel">{{tittle}}</h5>
+                  <button type="button" class="close" v-on:click="closeRegister" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="modal-body" style="padding: 50px">
+              
+                  <form id="productForm" action="javascript:;"> 
+
+                    <div class="form-group row">
+                      <label class="col-2 col-form-label">GTIN</label>
+                      <div class="col-10">
+                          <input class="form-control" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' v-model="product.gtin" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Embalagem</label>
+                        <div class="col-10">
+                        <select v-model="product.embalagem" class="form-control" required>
+                          <option>CAIXA</option>
+                          <option>PACK</option>
+                          <option>UNIDADE</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">Quantidade</label>
+                        <div class="col-10">
+                            <input class="form-control" type="number" v-model="product.quantidade" required>
+                        </div>
+                    </div>
+
+                    <div class="form-inline newinput">
+                        <label class="col-2 col-form-label">Altura</label>
+                        <input v-model="notimplemeted.alt" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" required>
+                        <select class="form-control mb-2 mr-sm-2 mb-sm-0" id="exampleSelect1" required>
+                            <option>Centímetro(s)</option>
+                            <option>Métro(s)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-inline newinput">
+                        <label class="col-2 col-form-label">Largura</label>
+                        <input v-model="notimplemeted.larg" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" required>
+                        <select class="form-control mb-2 mr-sm-2 mb-sm-0" id="exampleSelect1" required>
+                            <option>Centímetro(s)</option>
+                            <option>Métro(s)</option>
+                        </select>
+                      </div>
+
+                      <div class="form-inline newinput">
+                          <label class="col-2 col-form-label">Profundidade</label>
+                          <input v-model="notimplemeted.prof" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" required>
+                          <select class="form-control mb-2 mr-sm-2 mb-sm-0" id="exampleSelect1" required>
+                              <option>Centímetro(s)</option>
+                              <option>Métro(s)</option>
+                          </select>
+                      </div>
+
+                      <div class="form-inline newinput">
+                        <label class="col-2 col-form-label">Peso Bruto</label>
+                        <input v-model="notimplemeted.pesob" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" required>
+                        <select class="form-control mb-2 mr-sm-2 mb-sm-0" id="exampleSelect1" required>
+                            <option>Grama(s)</option>
+                            <option>Kilograma(s)</option>
+                        </select>
+                      </div>
+
+                      <div class="form-inline lastinput">
+                        <label class="col-2 col-form-label">Peso liquído</label>
+                        <input v-model="notimplemeted.pesol" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" required>
+                        <select class="form-control mb-2 mr-sm-2 mb-sm-0" id="exampleSelect1" required>
+                            <option>Grama(s)</option>
+                            <option>Kilograma(s)</option>
+                        </select>
+                      </div>
+
+                    </form>
+                  </div>
+
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" v-on:click="closeRegister">Cancelar</button>
+                      <button type="submit" form="productForm" class="btn btn-primary" v-on:click="executeAction">Salvar</button>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+      
+    </div>
+
+    <!-- load components -->
+
+    <script src="components/loading/loading.js"></script>
 
     <script src="components/product/product.js"></script>
     <link rel="stylesheet" href="components/product/product.css">
 
-
+    <script src="components/newproduct/newproduct.js"></script>
+    <link rel="stylesheet" href="components/newproduct/newproduct.css">
+    
 
   </body>
+
 
 </html>

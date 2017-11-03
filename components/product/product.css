@@ -2,6 +2,26 @@
     margin-top: 10px;
 }
 
+.product{
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s; 
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.newProduct {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: white !important;
+    font-style: bold;
+    background-color: 	 #26734d;
+}
+
+.newProduct:hover{
+    background-color: #2d8659;
+    cursor: pointer;
+}
+
 .product:hover{
     background-color: #e5e5e5;
     cursor: pointer;
@@ -9,6 +29,10 @@
 
 .product-hide {
     display: none;
+}
+
+.btn-action{
+    cursor: pointer;
 }
 
 .arrow{
