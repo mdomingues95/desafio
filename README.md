@@ -1,6 +1,6 @@
-### Desafio Simplus
+# Desafio Simplus
 
-## Bibliotécas
+## Bibliotecas
 * jQuery 
 * Firebase (Para os dados se manter atualizados em toda execução)
 
