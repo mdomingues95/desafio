@@ -1,7 +1,8 @@
 # Desafio Simplus
 
 ## Bibliotecas
-* jQuery 
+* jQuery
+* Material icons
 * Firebase (Para os dados se manter atualizados em toda execução)
 
 ## Frameworks
