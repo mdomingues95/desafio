@@ -6,8 +6,8 @@
 * Firebase (Para os dados se manter atualizados em toda execução)
 
 ## Frameworks
-* Bootstrap
-* Vue.js
+* Bootstrap 4
+* Vue.js 2
 
 ## Execução
 
